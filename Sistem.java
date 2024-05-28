@@ -18,16 +18,16 @@ public class Sistem {
 		return HEAD == null;
 	}
 	
-	public void JenisKeluhan() {
+	public void JenisKeluhan(Nasabah nasabah) {
 		switch(JKeluhan) {
-			case 1: HEAD.keluhan = "Transaksi tidak tercatat"; break;
-			case 2: HEAD.keluhan = "Petugas tidak ramah"; break;
-			case 3: HEAD.keluhan = "Kesalahan penarikan uang"; break;
-			case 4: HEAD.keluhan = "Keterlambatan pengkreditan gaji"; break;
-			case 5: HEAD.keluhan = "Kartu kredit ditolak"; break;
+			case 1: nasabah.keluhan = "Transaksi tidak tercatat"; break;
+			case 2: nasabah.keluhan = "Petugas tidak ramah"; break;
+			case 3: nasabah.keluhan = "Kesalahan penarikan uang"; break;
+			case 4: nasabah.keluhan = "Keterlambatan pengkreditan gaji"; break;
+			case 5: nasabah.keluhan = "Kartu kredit ditolak"; break;
 			case 6: 
 					Scanner sc = new Scanner(System.in);
-					System.out.println("Tuliskan Keluhan lainnya: "); HEAD.keluhan = sc.next();
+					System.out.println("Tuliskan Keluhan lainnya: "); nasabah.keluhan = sc.next();
 					break;
 				default: System.out.println("Jenis Keluhan tidak ditemukan");
 		}
@@ -69,7 +69,7 @@ public class Sistem {
 		
 		System.out.println("========== Form Keluhan ==========");
 		CekId();
-		String id = "ID-" + HID++;
+		int id = HID++;
 		System.out.print("Nama : "); HEAD.nama = sc.next();
 		System.out.print("Nama Ibu : "); HEAD.namaIbu = sc.next();
 		System.out.print("Nomor Rekening : "); HEAD.noRek = sc.next();
@@ -79,19 +79,18 @@ public class Sistem {
 							+ "4. Keterlambatan pengkreditan gaji \n"
 							+ "5. Kartu kredit ditolak \n"
 							+ "6. Lainnya");
-		System.out.print("Jenis Keluhan: "); JKeluhan = sc.nextInt();JenisKeluhan();
+		System.out.print("Jenis Keluhan: "); JKeluhan = sc.nextInt();JenisKeluhan(HEAD);
 		System.out.print("Deskripsi keluhan: "); HEAD.deskripsi = sc.next();
-		addTail(id, HEAD.nama, HEAD.namaIbu, HEAD.noRek, HEAD.keluhan, HEAD.deskripsi);
+		addTail(HEAD.id, HEAD.nama, HEAD.namaIbu, HEAD.noRek, HEAD.keluhan, HEAD.deskripsi);
 		System.out.println("===== Terima Kasih Form anda akan segera diproses =====");
 		System.out.println();
 		MainMenu();
 	}
-
 	
 	public void displayElement() {
 		Nasabah curNode = HEAD;
 		while (curNode != null) {
-			System.out.println(	"ID Keluhan : " + curNode.getId() + "\n" +
+			System.out.println(	"ID Keluhan : ID-" + curNode.getId() + "\n" +
 								"Nama Nasabah : " + curNode.getNama() + "\n" + 
 								"Nama Ibu Nasabah : " +curNode.getNamaIbu()+"\n" + 
 								"Nomor Rekening Nasabah : " +curNode.getNoRek() + "\n"+
@@ -110,7 +109,7 @@ public class Sistem {
 		System.out.println();
 	}
 	
-	public void addTail(String id, String nama, String namaIbu, String noRek, String keluhan, String deskripsi) {
+	public void addTail(int id, String nama, String namaIbu, String noRek, String keluhan, String deskripsi) {
 		Nasabah posNode=null, curNode=null;
 		
 		Nasabah newNode = new Nasabah(id, nama, namaIbu, noRek, keluhan, deskripsi);
@@ -126,7 +125,7 @@ public class Sistem {
 		}
 	}
 	
-	public void addHead(String id,String nama, String namaIbu, String noRek, String keluhan, String deskripsi) {
+	public void addHead(int id,String nama, String namaIbu, String noRek, String keluhan, String deskripsi) {
 		Nasabah newNode = new Nasabah( id,nama, namaIbu, noRek, keluhan, deskripsi);
 		if(isEmpty()) {
 			HEAD = newNode;
@@ -140,62 +139,59 @@ public class Sistem {
         Nasabah curNode = HEAD;
         int maxId = 0;
         while (curNode != null) {
-            String[] parts = curNode.getId().split("-");
-            int idNum = Integer.parseInt(parts[1]);
-            if (idNum > maxId) {
-                maxId = idNum;
+            if (curNode.getId() > maxId) {
+                maxId = curNode.getId();
             }
             curNode = curNode.getNext();
         }
         HID = maxId + 1;
     }
 	
-	public void HapusForm(String id) {
-    	if 	(HEAD != null) {
-        	boolean ketemu = false;
-        	int i = 1;
+	public void HapusForm(int id) {
+        if (HEAD != null) {
+            boolean ketemu = false;
+            int i = 1;
 
-        	Nasabah delNode = HEAD;
-        	Nasabah preNode = null;
+            Nasabah delNode = HEAD;
+            Nasabah preNode = null;
 
-        	while (delNode.next != null && !ketemu) {
-            	if 	(delNode.getId().equals(id)) {
-                	ketemu = true;
-            	} else {
-            		preNode = delNode;
-                	delNode = delNode.next;
-                	i++;
-            	}
-        	}
+            while (delNode != null && !ketemu) {
+                if (delNode.getId() == id) {
+                    ketemu = true;
+                } else {
+                    preNode = delNode;
+                    delNode = delNode.next;
+                    i++;
+                }
+            }
 
-        	if (ketemu) {
-            	if (i == 1) {
-            		HEAD = null;
-            	} else {
-                	preNode.next = delNode.next;
-                	delNode = null;
-            	}
-            	System.out.println("Form keluhan dengan ID " + id + " telah selesai.");
-        	}else {
-        		System.out.println("Form keluhan dengan ID " + id + " tidak ditemukan.");
-        	}
-    	}else {
-    		System.out.println("List form keluhan kosong.");
-    	}
-	}
+            if (ketemu) {
+                if (i == 1) {
+                    HEAD = delNode.getNext();
+                } else {
+                    preNode.next = delNode.getNext();
+                }
+                System.out.println("Form keluhan dengan ID-" + id + " telah selesai.");
+            } else {
+                System.out.println("Form keluhan dengan ID-" + id + " tidak ditemukan.");
+            }
+        } else {
+            System.out.println("List form keluhan kosong.");
+        }
+    }
 	
 	 public void HapusId() {
 	        Scanner sc = new Scanner(System.in);
 	        System.out.print("Masukkan ID Form yang telah selesai: ");
-	        String id = sc.nextLine();
+	        int id = sc.nextInt();
 	        HapusForm(id);
 	        MainMenu();
 	 }
 	 
-	 public Nasabah CariId(String id) {
+	 public Nasabah CariId(int id) {
 	        Nasabah curNode = HEAD;
 	        while (curNode != null) {
-	            if (curNode.getId().equals(id)) {
+	            if (curNode.getId() == id) {
 	                return curNode;
 	            }
 	            curNode = curNode.getNext();
@@ -206,11 +202,11 @@ public class Sistem {
 	 public void CariKeluhan() {
 		    Scanner sc = new Scanner(System.in);
 		    System.out.print("Masukkan ID Keluhan yang ingin dicari: ");
-		    String id = sc.nextLine();
+		    int id = sc.nextInt();
 		    Nasabah keluhan = CariId(id);
 		    if (keluhan != null) {
 		        System.out.println("Keluhan ditemukan:");
-		        System.out.println("ID Keluhan : " + keluhan.getId() + "\n" +
+		        System.out.println("ID Keluhan : ID-" + keluhan.getId() + "\n" +
 		                           "Nama Nasabah : " + keluhan.getNama() + "\n" +
 		                           "Nama Ibu Nasabah : " + keluhan.getNamaIbu() + "\n" +
 		                           "Nomor Rekening Nasabah : " + keluhan.getNoRek() + "\n" +

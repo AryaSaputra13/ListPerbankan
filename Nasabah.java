@@ -1,14 +1,14 @@
 package Tubes;
 
 public class Nasabah {
-	protected String id;
+	protected int id;
 	protected String nama, noRek;
 	protected String keluhan, deskripsi;
 	protected String namaIbu;
 	protected Nasabah next;
 	
 
-	public Nasabah(String id, String nama, String namaIbu, String noRek, String keluhan, String deskripsi) {
+	public Nasabah(int id, String nama, String namaIbu, String noRek, String keluhan, String deskripsi) {
 		this.id = id;
 		this.nama = nama;
 		this.namaIbu = namaIbu;
@@ -22,7 +22,7 @@ public class Nasabah {
 		this.next = next;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 	
